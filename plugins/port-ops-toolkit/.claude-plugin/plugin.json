@@ -1,5 +1,5 @@
 {
   "name": "port-ops-toolkit",
-  "description": "Port-specific operational playbooks plus general documentation and utility skills (auth, payments, SEO, prompt engineering)",
+  "description": "Core Port operational playbooks for incident triage and service health",
   "version": "1.0.0"
 }

@@ -7,27 +7,27 @@
     {
       "name": "cursor-productivity-toolkit",
       "source": "./plugins/cursor-productivity-toolkit",
-      "description": "Cursor IDE productivity workflows: parallel exploring/testing/review, terminal and browser monitoring, and workspace utilities"
+      "description": "Core Cursor workflow skills for exploring, reviewing, and fixing code in parallel"
     },
     {
       "name": "code-quality-toolkit",
       "source": "./plugins/code-quality-toolkit",
-      "description": "Auditing, reviewing, debugging, and testing skills to keep code correct and maintainable"
+      "description": "Core code review, debugging, and test-writing skills"
     },
     {
       "name": "frontend-toolkit",
       "source": "./plugins/frontend-toolkit",
-      "description": "Frontend UI conversion/patterns plus product analytics, error tracking, and feature flag instrumentation"
+      "description": "Core frontend UI and product instrumentation skills"
     },
     {
       "name": "infrastructure-toolkit",
       "source": "./plugins/infrastructure-toolkit",
-      "description": "Infrastructure, CI/CD, and delivery workflow skills: Docker, Kubernetes, Terraform, PRs, releases, incidents, and architecture decisions"
+      "description": "Core infrastructure and delivery workflow skills: containerizing, CI, PRs, and incidents"
     },
     {
       "name": "port-ops-toolkit",
       "source": "./plugins/port-ops-toolkit",
-      "description": "Port-specific operational playbooks plus general documentation and utility skills (auth, payments, SEO, prompt engineering)"
+      "description": "Core Port operational playbooks for incident triage and service health"
     }
   ]
 }

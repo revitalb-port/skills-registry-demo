@@ -1,5 +1,5 @@
 {
   "name": "code-quality-toolkit",
-  "description": "Auditing, reviewing, debugging, and testing skills to keep code correct and maintainable",
+  "description": "Core code review, debugging, and test-writing skills",
   "version": "1.0.0"
 }
