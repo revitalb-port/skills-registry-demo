@@ -2,6 +2,7 @@
 name: using-ui-stack
 description: Enforce a configuration-driven design system when generating UI. Ensures consistent spacing, colors, typography, dark mode, interactions, and accessibility across all AI-generated components.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Using UI Stack

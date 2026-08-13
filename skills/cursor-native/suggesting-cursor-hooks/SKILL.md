@@ -2,6 +2,7 @@
 name: suggesting-cursor-hooks
 description: When the user keeps asking for the same check to run (lint, tests, type-check), suggest a Cursor hook to automate it.
 user-invocable: false
+version: 1.0.0
 ---
 
 # Suggesting Cursor Hooks

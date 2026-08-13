@@ -1,6 +1,7 @@
 ---
 name: adding-e2e-tests
 description: Set up Playwright end-to-end testing in a project, including test configuration, example tests, and CI integration.
+version: 1.0.0
 ---
 
 # Add E2E Tests (Playwright)

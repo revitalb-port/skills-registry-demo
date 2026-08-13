@@ -2,6 +2,7 @@
 name: kubernetes-deploying
 description: Deploy applications to Kubernetes — Deployments, Services, Ingress, ConfigMaps, Secrets, health checks, and scaling.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Kubernetes Deploying

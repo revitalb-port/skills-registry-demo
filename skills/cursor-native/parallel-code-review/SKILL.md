@@ -2,6 +2,7 @@
 name: parallel-code-review
 description: Run four parallel read-only subagents that each review the same diff from a different lens — security, performance, correctness, and readability — then merge findings into one report. Use before merging large or risky PRs.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Parallel Code Review

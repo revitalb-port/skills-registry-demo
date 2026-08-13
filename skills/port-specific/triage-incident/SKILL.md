@@ -2,6 +2,7 @@
 name: triage-incident
 description: Analyze incidents in Alert stage and suggest severity, business impact, affected services, communications, and response team. Use when triaging incidents, evaluating incident severity, or when the user asks to analyze incident impact.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Triage Incident Skill

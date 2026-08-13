@@ -1,6 +1,7 @@
 ---
 name: best-of-n-solving
 description: Solve a hard problem by trying multiple approaches in parallel using isolated git worktrees. Each attempt runs in its own branch, and the best solution is selected. Use for complex refactors, tricky bugs, or architectural decisions where multiple strategies could work.
+version: 1.0.0
 ---
 
 # Best-of-N Problem Solving

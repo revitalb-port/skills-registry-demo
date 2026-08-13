@@ -2,6 +2,7 @@
 name: suggesting-skills
 description: When the user struggles with a task that a known skill could handle, suggest installing it.
 user-invocable: false
+version: 1.0.0
 ---
 
 # Suggesting Skills

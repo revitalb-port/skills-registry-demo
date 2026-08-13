@@ -2,6 +2,7 @@
 name: day-planner
 description: Plan your day by querying Port for your assigned tasks, on-call status, pending PRs, and upcoming deployments. Prioritizes tasks over incidents.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Day Planner Skill

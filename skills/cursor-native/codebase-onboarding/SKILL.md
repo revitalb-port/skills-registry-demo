@@ -2,6 +2,7 @@
 name: codebase-onboarding
 description: Launch multiple explore subagents in parallel to investigate architecture, data models, auth, APIs, and deployment. Synthesize into an onboarding document.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Codebase Onboarding

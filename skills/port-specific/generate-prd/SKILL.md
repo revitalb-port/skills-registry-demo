@@ -2,6 +2,7 @@
 name: generate-prd
 description: Generate a Product Requirements Document for a work item using Port's service catalog context. Use when creating a PRD, enriching a ticket, or preparing a work item for development.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Generate PRD Skill

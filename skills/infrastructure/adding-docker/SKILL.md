@@ -1,6 +1,7 @@
 ---
 name: adding-docker
 description: Dockerize an application with a production-ready Dockerfile, docker-compose setup, and .dockerignore.
+version: 1.0.0
 ---
 
 # Add Docker

@@ -2,6 +2,7 @@
 name: react-native-patterns
 description: Build mobile apps with React Native and Expo — navigation, platform-specific code, performance, and native modules.
 user-invocable: true
+version: 1.0.0
 ---
 
 # React Native Patterns

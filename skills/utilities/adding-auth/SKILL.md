@@ -1,6 +1,7 @@
 ---
 name: adding-auth
 description: Add authentication to a web application using NextAuth.js (Auth.js), including OAuth providers, session management, and protected routes.
+version: 1.0.0
 ---
 
 # Add Authentication (Auth.js)

@@ -1,6 +1,7 @@
 ---
 name: parallel-exploring
 description: Explore a large codebase in parallel by launching multiple explore subagents that each investigate a different area simultaneously. Use when onboarding onto a new project, understanding architecture, or investigating a cross-cutting concern.
+version: 1.0.0
 ---
 
 # Parallel Explore

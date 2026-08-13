@@ -2,6 +2,7 @@
 name: suggesting-cursor-rules
 description: When the user repeats the same correction or convention multiple times, suggest a Cursor rule to encode it permanently.
 user-invocable: false
+version: 1.0.0
 ---
 
 # Suggesting Cursor Rules

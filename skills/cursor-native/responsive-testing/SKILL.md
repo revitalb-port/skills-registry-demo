@@ -2,6 +2,7 @@
 name: responsive-testing
 description: Open the app in Cursor's browser at multiple viewport sizes, screenshot each, and report any layout breakage.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Responsive Testing

@@ -1,6 +1,7 @@
 ---
 name: babysitting-pr
 description: Monitor a pull request for CI failures, review comments, and merge conflicts — then fix them automatically. Use when a PR is open and you want the agent to keep it merge-ready.
+version: 1.0.0
 ---
 
 # Babysitting a PR

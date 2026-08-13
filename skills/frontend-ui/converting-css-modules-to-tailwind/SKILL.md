@@ -2,6 +2,7 @@
 name: converting-css-modules-to-tailwind
 description: Migrate CSS Modules (.module.css/.module.scss) to Tailwind utility classes. Handles styles object removal, className interpolation, composition, and global overrides.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Converting CSS Modules to Tailwind

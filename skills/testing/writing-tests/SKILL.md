@@ -1,6 +1,7 @@
 ---
 name: writing-tests
 description: Analyze existing code and write comprehensive unit and integration tests for it. Detects the test framework, identifies untested code paths, and generates tests with proper mocking, edge cases, and assertions. Use when the user asks to add tests, improve coverage, or test a specific module.
+version: 1.0.0
 ---
 
 # Writing Tests

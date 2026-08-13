@@ -1,6 +1,7 @@
 ---
 name: adding-feature-flags
 description: Add feature flags to an application for gradual rollouts, A/B testing, and kill switches using PostHog, LaunchDarkly, or a simple local implementation.
+version: 1.0.0
 ---
 
 # Add Feature Flags

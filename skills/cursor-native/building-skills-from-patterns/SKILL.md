@@ -2,6 +2,7 @@
 name: building-skills-from-patterns
 description: When the same multi-step workflow repeats in Cursor (user corrections or agent redos), capture it as a new SKILL.md under .cursor/skills/ so future sessions load it automatically.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Building Skills From Patterns

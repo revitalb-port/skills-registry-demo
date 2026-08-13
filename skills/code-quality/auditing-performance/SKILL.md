@@ -1,6 +1,7 @@
 ---
 name: auditing-performance
 description: Audit and optimize application performance, including bundle size, rendering, database queries, and Core Web Vitals.
+version: 1.0.0
 ---
 
 # Performance Audit

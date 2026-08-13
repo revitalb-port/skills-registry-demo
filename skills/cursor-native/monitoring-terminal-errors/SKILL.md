@@ -2,6 +2,7 @@
 name: monitoring-terminal-errors
 description: Watch running terminal processes for crashes and stack traces. When an error appears, navigate to the failing file and line, diagnose, and fix it automatically.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Monitoring Terminal Errors

@@ -1,6 +1,7 @@
 ---
 name: auditing-security
 description: Perform a systematic security audit of a codebase, checking for OWASP Top 10 vulnerabilities, secrets exposure, and insecure patterns.
+version: 1.0.0
 ---
 
 # Security Audit

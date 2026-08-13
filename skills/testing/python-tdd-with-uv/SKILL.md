@@ -2,6 +2,7 @@
 name: python-tdd-with-uv
 description: Test-driven development in Python using uv as the package manager. Covers the red-green-refactor cycle, vertical slicing, and uv project setup.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Python TDD with uv

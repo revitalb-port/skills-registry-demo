@@ -9,6 +9,7 @@ description: >-
   "create an image", "make a picture of", "edit this image", "restyle this",
   "make a mockup of", "draw a", "render a", "illustration of".
 user-invocable: true
+version: 1.0.0
 ---
 
 # Generating Images (OpenAI gpt-image-2)

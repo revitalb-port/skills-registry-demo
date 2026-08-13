@@ -2,6 +2,7 @@
 name: writing-copy
 description: Write marketing copy for landing pages, product descriptions, CTAs, emails, and app UI text.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Writing Copy

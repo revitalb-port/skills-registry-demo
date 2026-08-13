@@ -2,6 +2,7 @@
 name: api-smoke-testing
 description: Start the dev server, discover API routes from the codebase, hit every endpoint, and report which ones return errors.
 user-invocable: true
+version: 1.0.0
 ---
 
 # API Smoke Testing

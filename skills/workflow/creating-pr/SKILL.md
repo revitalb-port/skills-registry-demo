@@ -2,6 +2,7 @@
 name: creating-pr
 description: Create a clean, review-ready pull request with a good title, structured description, linked issues, and appropriate reviewers.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Creating a PR

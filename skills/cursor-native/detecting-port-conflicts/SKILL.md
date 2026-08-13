@@ -2,6 +2,7 @@
 name: detecting-port-conflicts
 description: Detect EADDRINUSE and port conflicts, find what's using the port, and resolve it by killing the process or suggesting an alternative port.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Detecting Port Conflicts

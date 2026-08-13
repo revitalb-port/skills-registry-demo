@@ -1,6 +1,7 @@
 ---
 name: setting-up-terraform
 description: Set up Terraform infrastructure-as-code for cloud resources, including provider configuration, modules, state management, and CI integration.
+version: 1.0.0
 ---
 
 # Setup Terraform

@@ -1,6 +1,7 @@
 ---
 name: switching-projects
 description: Switch the current Cursor workspace to a different project directory using the cursor-app-control MCP. Use when the user asks to switch projects, open another repo, jump to a different codebase, or move to a worktree.
+version: 1.0.0
 ---
 
 # Switch Project

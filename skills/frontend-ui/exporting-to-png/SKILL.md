@@ -2,6 +2,7 @@
 name: exporting-to-png
 description: Export code, terminal output, diagrams, or UI components to PNG images using headless browser rendering or CLI tools.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Exporting to PNG

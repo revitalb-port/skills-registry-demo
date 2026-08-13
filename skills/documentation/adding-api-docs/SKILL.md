@@ -1,6 +1,7 @@
 ---
 name: adding-api-docs
 description: Generate OpenAPI/Swagger documentation for an API, including endpoint schemas, request/response types, and interactive docs UI.
+version: 1.0.0
 ---
 
 # Add API Documentation (OpenAPI)

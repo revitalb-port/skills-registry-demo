@@ -2,6 +2,7 @@
 name: finding-dev-server-url
 description: Scan running terminals for dev server URLs (localhost ports), report them, and optionally open the app in Cursor's built-in browser.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Finding Dev Server URL

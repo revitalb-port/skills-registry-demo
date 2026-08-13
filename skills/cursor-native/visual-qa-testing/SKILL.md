@@ -1,6 +1,7 @@
 ---
 name: visual-qa-testing
 description: Visually QA a web application by launching it in Cursor's built-in browser, taking screenshots, checking console errors, and auditing network requests. Use after making UI changes to verify they look correct.
+version: 1.0.0
 ---
 
 # Visual QA

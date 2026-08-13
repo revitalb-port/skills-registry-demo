@@ -1,6 +1,7 @@
 ---
 name: grinding-until-pass
 description: Keep iterating on code changes until the tests pass, the build succeeds, or linting is clean. Runs in a tight loop of fix → run → check → repeat. Use when you want the agent to autonomously grind through test failures or build errors.
+version: 1.0.0
 ---
 
 # Grind Until Pass

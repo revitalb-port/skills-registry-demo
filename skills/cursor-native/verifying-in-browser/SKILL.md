@@ -1,6 +1,7 @@
 ---
 name: verifying-in-browser
 description: After making code changes, start the dev server, open the app in Cursor's built-in browser, and verify everything works — check rendering, console errors, and network health. Use proactively after any UI or API change.
+version: 1.0.0
 ---
 
 # Verify in Browser

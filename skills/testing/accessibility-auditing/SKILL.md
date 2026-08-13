@@ -2,6 +2,7 @@
 name: accessibility-auditing
 description: Use Cursor's browser aria snapshots to audit a page for accessibility issues — missing labels, broken tab order, contrast, and ARIA misuse.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Accessibility Auditing

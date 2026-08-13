@@ -1,6 +1,7 @@
 ---
 name: reviewing-code
 description: Perform a thorough code review focused on correctness, maintainability, performance, and best practices.
+version: 1.0.0
 ---
 
 # Code Review

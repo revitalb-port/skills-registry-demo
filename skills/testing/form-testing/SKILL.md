@@ -2,6 +2,7 @@
 name: form-testing
 description: Use Cursor's browser to fill and submit every form in the app with valid and invalid data, verifying validation, error states, and success flows.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Form Testing

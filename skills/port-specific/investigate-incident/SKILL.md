@@ -2,6 +2,7 @@
 name: investigate-incident
 description: Perform root cause analysis for incidents by querying Port entities - deployments, services, PRs, monitoring data, and past incidents. Use when investigating incidents or finding why an incident occurred.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Investigate Incident Skill

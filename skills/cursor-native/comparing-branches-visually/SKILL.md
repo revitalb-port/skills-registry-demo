@@ -2,6 +2,7 @@
 name: comparing-branches-visually
 description: Check out two branches in separate worktrees, start both dev servers on different ports, screenshot the same pages, and produce a visual diff.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Comparing Branches Visually

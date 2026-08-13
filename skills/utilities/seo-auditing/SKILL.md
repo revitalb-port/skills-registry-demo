@@ -2,6 +2,7 @@
 name: seo-auditing
 description: Audit technical SEO — meta tags, structured data, Open Graph, sitemaps, robots.txt, performance, and accessibility signals.
 user-invocable: true
+version: 1.0.0
 ---
 
 # SEO Auditing

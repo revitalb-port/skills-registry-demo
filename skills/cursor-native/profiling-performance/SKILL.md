@@ -1,6 +1,7 @@
 ---
 name: profiling-performance
 description: Profile a running web application's CPU performance using Cursor's built-in browser profiler. Captures call stacks, identifies slow functions, and suggests optimizations. Use when a page feels slow or janky.
+version: 1.0.0
 ---
 
 # Performance Profile

@@ -1,6 +1,7 @@
 ---
 name: updating-npm-package
 description: Safely update an npm package by checking npmjs.com for the latest version, reading release notes, and handling minor vs major upgrades differently. For minor updates, just do it. For major updates, find the upgrade guide, validate breaking changes, and produce a detailed migration report.
+version: 1.0.0
 ---
 
 # Updating an npm Package

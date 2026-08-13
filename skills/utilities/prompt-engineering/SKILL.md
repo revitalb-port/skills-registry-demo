@@ -2,6 +2,7 @@
 name: prompt-engineering
 description: Write effective prompts for LLMs — structure, few-shot examples, chain-of-thought, system prompts, and output parsing.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Prompt Engineering

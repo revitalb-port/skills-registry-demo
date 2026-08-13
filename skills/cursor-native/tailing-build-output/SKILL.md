@@ -2,6 +2,7 @@
 name: tailing-build-output
 description: Monitor a build process (webpack, turbo, docker) for warnings and errors as they stream. Summarize issues and fix them before the build finishes.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Tailing Build Output

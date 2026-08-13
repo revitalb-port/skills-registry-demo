@@ -2,6 +2,7 @@
 name: writing-commit-messages
 description: Write clear, conventional commit messages with proper type prefixes, scopes, and body content.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Writing Commit Messages

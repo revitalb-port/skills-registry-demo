@@ -2,6 +2,7 @@
 name: parallel-test-fixing
 description: When multiple tests fail, assign each failing test file to a separate subagent that fixes it independently in parallel.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Parallel Test Fixing

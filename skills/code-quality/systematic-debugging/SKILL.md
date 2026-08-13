@@ -2,6 +2,7 @@
 name: systematic-debugging
 description: Structured debugging methodology — reproduce, isolate, hypothesize, verify. Covers git bisect, binary search, logging, and minimal reproduction.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Systematic Debugging

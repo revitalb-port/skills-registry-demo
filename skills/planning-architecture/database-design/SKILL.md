@@ -2,6 +2,7 @@
 name: database-design
 description: Design database schemas — tables, relationships, indexes, constraints, and ORM setup. Covers relational design, normalization, and common patterns.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Database Design

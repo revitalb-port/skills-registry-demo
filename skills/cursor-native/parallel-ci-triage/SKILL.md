@@ -2,6 +2,7 @@
 name: parallel-ci-triage
 description: When GitHub Actions fails, fetch failing job logs and assign each failing job to a separate subagent that fixes its slice of the problem in parallel. Use for multi-job CI failures where jobs are independent.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Parallel CI Triage

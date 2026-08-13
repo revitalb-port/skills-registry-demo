@@ -2,6 +2,7 @@
 name: saving-workspace-context
 description: Automatically persist useful context — research, decisions, learnings, templates — to workspace files so knowledge survives across conversations.
 user-invocable: false
+version: 1.0.0
 ---
 
 # Saving Workspace Context

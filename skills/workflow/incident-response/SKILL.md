@@ -2,6 +2,7 @@
 name: incident-response
 description: Handle production incidents — triage, mitigate, communicate, and write postmortems.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Incident Response

@@ -2,6 +2,7 @@
 name: fixing-broken-links
 description: Crawl all links in a file or project, test each for a valid HTTP response, report broken ones, and fix or remove them.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Fixing Broken Links

@@ -2,6 +2,7 @@
 name: recording-browser-flow-as-test
 description: Execute a user flow step-by-step in Cursor's built-in browser while documenting each action, then emit a Playwright test that replays the same flow using stable selectors derived from the accessibility tree.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Recording Browser Flow as Playwright Test

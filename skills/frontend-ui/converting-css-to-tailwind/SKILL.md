@@ -2,6 +2,7 @@
 name: converting-css-to-tailwind
 description: Convert plain CSS stylesheets to Tailwind CSS utility classes. Handles selectors, media queries, pseudo-classes, custom properties, and animations.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Converting CSS to Tailwind

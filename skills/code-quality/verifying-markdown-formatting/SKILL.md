@@ -2,6 +2,7 @@
 name: verifying-markdown-formatting
 description: Verify that a Markdown file has correct formatting — headings, lists, links, code blocks, spacing, and consistent style.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Verifying Markdown Formatting

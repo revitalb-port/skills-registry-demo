@@ -2,6 +2,7 @@
 name: dark-mode-testing
 description: Toggle between light and dark mode in Cursor's browser, screenshot both states, and flag missing token mappings or contrast issues.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Dark Mode Testing

@@ -1,6 +1,7 @@
 ---
 name: adding-error-tracking
 description: Add Sentry error tracking, performance monitoring, and source maps to a web application.
+version: 1.0.0
 ---
 
 # Add Error Tracking (Sentry)

@@ -2,6 +2,7 @@
 name: auto-type-checking
 description: Run TypeScript type checking after file edits and immediately flag type errors before moving on. Uses Cursor hooks for automatic enforcement.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Auto Type Checking

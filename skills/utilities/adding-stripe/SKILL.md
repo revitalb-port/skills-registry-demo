@@ -1,6 +1,7 @@
 ---
 name: adding-stripe
 description: Integrate Stripe payments into a web application, including checkout sessions, webhooks, and customer portal.
+version: 1.0.0
 ---
 
 # Add Stripe Payments

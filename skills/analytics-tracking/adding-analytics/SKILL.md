@@ -1,6 +1,7 @@
 ---
 name: adding-analytics
 description: Add PostHog analytics to a web application, including event tracking, page views, feature flags, and session replay.
+version: 1.0.0
 ---
 
 # Add Analytics (PostHog)

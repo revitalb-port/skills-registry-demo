@@ -2,6 +2,7 @@
 name: network-request-auditing
 description: After navigating and interacting in Cursor's built-in browser, use browser_network_requests to audit every fetch/XHR for failures, slowness, duplicate calls, and suspicious payloads. Use for API-heavy pages and after backend or client networking changes.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Network Request Auditing

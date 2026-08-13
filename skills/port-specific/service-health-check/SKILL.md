@@ -2,6 +2,7 @@
 name: service-health-check
 description: Query Port's service catalog to get a comprehensive health overview of a service including scorecard status, recent incidents, deployments, and dependencies.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Service Health Check Skill

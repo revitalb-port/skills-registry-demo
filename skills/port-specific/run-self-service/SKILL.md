@@ -2,6 +2,7 @@
 name: run-self-service
 description: Execute Port self-service actions like provisioning infrastructure, creating services, or triggering workflows. Acts as an interface for Port actions.
 user-invocable: true
+version: 1.0.0
 ---
 
 # Run Self-Service Action Skill
