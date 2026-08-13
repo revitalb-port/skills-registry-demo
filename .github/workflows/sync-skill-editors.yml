@@ -6,10 +6,38 @@ on:
     paths:
       - "skills/**/SKILL.md"
       - "plugins/**/plugin.json"
+      - "scripts/sync_skill_editors.py"
+      - "tests/test_sync_skill_editors.py"
+      - ".github/workflows/sync-skill-editors.yml"
+  pull_request:
+    paths:
+      - "skills/**/SKILL.md"
+      - "plugins/**/plugin.json"
+      - "scripts/sync_skill_editors.py"
+      - "tests/test_sync_skill_editors.py"
+      - ".github/workflows/sync-skill-editors.yml"
   workflow_dispatch: {}
 
+concurrency:
+  group: sync-skill-editors-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run sync script unit tests
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+
   sync:
+    needs: test
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
