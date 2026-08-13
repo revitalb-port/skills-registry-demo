@@ -1,5 +1,12 @@
 {
   "name": "cursor-productivity-toolkit",
   "description": "Core Cursor workflow skills for exploring, reviewing, and fixing code in parallel",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "skills": [
+    "cursor-native/codebase-onboarding",
+    "cursor-native/grinding-until-pass",
+    "cursor-native/parallel-code-review",
+    "cursor-native/parallel-exploring",
+    "cursor-native/parallel-test-fixing"
+  ]
 }

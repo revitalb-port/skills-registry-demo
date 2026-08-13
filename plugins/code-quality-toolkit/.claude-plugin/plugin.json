@@ -1,5 +1,12 @@
 {
   "name": "code-quality-toolkit",
   "description": "Core code review, debugging, and test-writing skills",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "skills": [
+    "testing/adding-e2e-tests",
+    "code-quality/auditing-security",
+    "code-quality/reviewing-code",
+    "code-quality/systematic-debugging",
+    "testing/writing-tests"
+  ]
 }

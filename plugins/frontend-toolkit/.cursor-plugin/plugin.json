@@ -1,5 +1,11 @@
 {
   "name": "frontend-toolkit",
   "description": "Core frontend UI and product instrumentation skills",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "skills": [
+    "analytics-tracking/adding-analytics",
+    "analytics-tracking/adding-feature-flags",
+    "frontend-ui/converting-css-to-tailwind",
+    "frontend-ui/using-ui-stack"
+  ]
 }

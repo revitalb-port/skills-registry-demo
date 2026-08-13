@@ -1,5 +1,13 @@
 {
   "name": "infrastructure-toolkit",
   "description": "Core infrastructure and delivery workflow skills: containerizing, CI, PRs, and incidents",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "skills": [
+    "infrastructure/adding-docker",
+    "workflow/creating-pr",
+    "workflow/incident-response",
+    "infrastructure/setting-up-ci",
+    "workflow/writing-commit-messages",
+    "testing/writing-tests"
+  ]
 }
