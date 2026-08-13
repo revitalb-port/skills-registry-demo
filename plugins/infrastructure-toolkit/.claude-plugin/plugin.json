@@ -1,0 +1,5 @@
+{
+  "name": "infrastructure-toolkit",
+  "description": "Infrastructure, CI/CD, and delivery workflow skills: Docker, Kubernetes, Terraform, PRs, releases, incidents, and architecture decisions",
+  "version": "1.0.0"
+}

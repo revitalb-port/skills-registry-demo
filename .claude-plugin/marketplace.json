@@ -1,0 +1,33 @@
+{
+  "name": "skills-registry-demo",
+  "owner": {
+    "name": "revitalb-port"
+  },
+  "plugins": [
+    {
+      "name": "cursor-productivity-toolkit",
+      "source": "./plugins/cursor-productivity-toolkit",
+      "description": "Cursor IDE productivity workflows: parallel exploring/testing/review, terminal and browser monitoring, and workspace utilities"
+    },
+    {
+      "name": "code-quality-toolkit",
+      "source": "./plugins/code-quality-toolkit",
+      "description": "Auditing, reviewing, debugging, and testing skills to keep code correct and maintainable"
+    },
+    {
+      "name": "frontend-toolkit",
+      "source": "./plugins/frontend-toolkit",
+      "description": "Frontend UI conversion/patterns plus product analytics, error tracking, and feature flag instrumentation"
+    },
+    {
+      "name": "infrastructure-toolkit",
+      "source": "./plugins/infrastructure-toolkit",
+      "description": "Infrastructure, CI/CD, and delivery workflow skills: Docker, Kubernetes, Terraform, PRs, releases, incidents, and architecture decisions"
+    },
+    {
+      "name": "port-ops-toolkit",
+      "source": "./plugins/port-ops-toolkit",
+      "description": "Port-specific operational playbooks plus general documentation and utility skills (auth, payments, SEO, prompt engineering)"
+    }
+  ]
+}
