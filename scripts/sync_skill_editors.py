@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
 Sync last-editor and last-edited-at metadata for every skill (SKILL.md) and
-plugin (plugin.json manifest) into the corresponding Port entity.
+plugin (plugin.json manifest) into the corresponding Port entity, and sync
+each plugin's skills relation from the real symlinks under
+plugins/<name>/skills/.
 
-Port's native GitHub Ocean integration has no per-file commit history, so this
-script fills that specific gap using GitHub's "commits for a path" API. It
-does not touch any property the integration mapping already owns.
+Port's native GitHub Ocean integration has no per-file commit history, and it
+can't aggregate a folder of symlinks into a single relation, so this script
+fills those two specific gaps. It does not touch any property the
+integration mapping already owns.
 
 Required environment variables:
   PORT_CLIENT_ID
@@ -69,12 +72,29 @@ def get_last_commit_for_path(repo, path, github_token):
     return login or name, date
 
 
-def upsert_entity(port_token, blueprint, identifier, last_editor, last_edited_at):
+def upsert_entity(port_token, blueprint, identifier, last_editor, last_edited_at, relations=None):
     encoded_identifier = urllib.parse.quote(identifier, safe="")
     url = f"{PORT_API_URL}/v1/blueprints/{blueprint}/entities/{encoded_identifier}"
     headers = {"Authorization": f"Bearer {port_token}"}
     body = {"properties": {"lastEditor": last_editor, "lastEditedAt": last_edited_at}}
+    if relations is not None:
+        body["relations"] = relations
     http_json("PATCH", url, headers=headers, body=body)
+
+
+def get_plugin_skill_identifiers(repo, plugin_name):
+    skills_dir = f"plugins/{plugin_name}/skills"
+    if not os.path.isdir(skills_dir):
+        return []
+    identifiers = []
+    for entry in sorted(os.listdir(skills_dir)):
+        link_path = os.path.join(skills_dir, entry)
+        if not os.path.islink(link_path):
+            continue
+        target = os.path.realpath(link_path)
+        skill_path = os.path.join(os.path.relpath(target, os.getcwd()), "SKILL.md")
+        identifiers.append(f"{repo}/{skill_path}")
+    return identifiers
 
 
 def sync_skills(port_token, repo, github_token):
@@ -108,9 +128,20 @@ def sync_plugins(port_token, repo, github_token):
             editor, date = get_last_commit_for_path(repo, path, github_token)
             if date and (best_date is None or date > best_date):
                 best_editor, best_date = editor, date
+        skill_identifiers = get_plugin_skill_identifiers(repo, plugin_name)
         identifier = f"{repo}/{plugin_name}"
-        upsert_entity(port_token, "agentPlugin", identifier, best_editor, best_date)
-        print(f"  {identifier}: lastEditor={best_editor} lastEditedAt={best_date}")
+        upsert_entity(
+            port_token,
+            "agentPlugin",
+            identifier,
+            best_editor,
+            best_date,
+            relations={"skills": skill_identifiers},
+        )
+        print(
+            f"  {identifier}: lastEditor={best_editor} lastEditedAt={best_date} "
+            f"skills={skill_identifiers}"
+        )
 
 
 def main():

@@ -1,12 +1,5 @@
 {
   "name": "port-ops-toolkit",
   "description": "Core Port operational playbooks for incident triage and service health",
-  "version": "1.0.0",
-  "skills": [
-    "utilities/adding-auth",
-    "port-specific/investigate-incident",
-    "port-specific/run-self-service",
-    "port-specific/service-health-check",
-    "port-specific/triage-incident"
-  ]
+  "version": "1.0.0"
 }
