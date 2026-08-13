@@ -73,7 +73,7 @@ def upsert_skill_entity(port_token, identifier, last_editor, last_edited_at):
     encoded_identifier = urllib.parse.quote(identifier, safe="")
     url = (
         f"{PORT_API_URL}/v1/blueprints/skill/entities/{encoded_identifier}"
-        "?upsert=true&merge=true&create_missing_related_entities=true"
+        "?merge=true&create_missing_related_entities=true"
     )
     headers = {"Authorization": f"Bearer {port_token}"}
     body = {"properties": {"lastEditor": last_editor, "lastEditedAt": last_edited_at}}
