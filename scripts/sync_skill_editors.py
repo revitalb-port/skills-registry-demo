@@ -22,7 +22,6 @@ import glob
 import os
 import sys
 import urllib.error
-import urllib.parse
 import urllib.request
 import json
 
@@ -73,13 +72,18 @@ def get_last_commit_for_path(repo, path, github_token):
 
 
 def upsert_entity(port_token, blueprint, identifier, last_editor, last_edited_at, relations=None):
-    encoded_identifier = urllib.parse.quote(identifier, safe="")
-    url = f"{PORT_API_URL}/v1/blueprints/{blueprint}/entities/{encoded_identifier}"
+    # POST with ?upsert=true is the supported Port upsert pattern (see
+    # skills/port-specific/run-self-service/helpers.py). PATCH with query params
+    # such as merge= or upsert= is rejected with HTTP 422.
+    url = f"{PORT_API_URL}/v1/blueprints/{blueprint}/entities?upsert=true"
     headers = {"Authorization": f"Bearer {port_token}"}
-    body = {"properties": {"lastEditor": last_editor, "lastEditedAt": last_edited_at}}
+    body = {
+        "identifier": identifier,
+        "properties": {"lastEditor": last_editor, "lastEditedAt": last_edited_at},
+    }
     if relations is not None:
         body["relations"] = relations
-    http_json("PATCH", url, headers=headers, body=body)
+    http_json("POST", url, headers=headers, body=body)
 
 
 def get_plugin_skill_identifiers(repo, plugin_name):
