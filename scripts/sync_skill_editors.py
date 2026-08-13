@@ -18,6 +18,7 @@ Required environment variables:
 import glob
 import os
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 import json
@@ -33,8 +34,12 @@ def http_json(method, url, headers=None, body=None):
         req.add_header(k, v)
     if data is not None:
         req.add_header("Content-Type", "application/json")
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        print(f"HTTP {e.code} for {method} {url}: {e.read().decode()}", file=sys.stderr)
+        raise
 
 
 def get_port_token(client_id, client_secret):
