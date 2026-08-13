@@ -1,0 +1,5 @@
+{
+  "name": "infrastructure-toolkit",
+  "description": "Core infrastructure and delivery workflow skills: containerizing, CI, PRs, and incidents",
+  "version": "1.0.0"
+}
