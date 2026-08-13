@@ -71,10 +71,7 @@ def get_last_commit_for_path(repo, path, github_token):
 
 def upsert_skill_entity(port_token, identifier, last_editor, last_edited_at):
     encoded_identifier = urllib.parse.quote(identifier, safe="")
-    url = (
-        f"{PORT_API_URL}/v1/blueprints/skill/entities/{encoded_identifier}"
-        "?merge=true&create_missing_related_entities=true"
-    )
+    url = f"{PORT_API_URL}/v1/blueprints/skill/entities/{encoded_identifier}"
     headers = {"Authorization": f"Bearer {port_token}"}
     body = {"properties": {"lastEditor": last_editor, "lastEditedAt": last_edited_at}}
     http_json("PATCH", url, headers=headers, body=body)
