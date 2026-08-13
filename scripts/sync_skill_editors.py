@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Sync the last-editor and last-edited-at metadata for every skills/**/SKILL.md
-file into the corresponding `skill` entity in Port.
+Sync last-editor and last-edited-at metadata for every skill (SKILL.md) and
+plugin (plugin.json manifest) into the corresponding Port entity.
 
 Port's native GitHub Ocean integration has no per-file commit history, so this
 script fills that specific gap using GitHub's "commits for a path" API. It
@@ -69,12 +69,48 @@ def get_last_commit_for_path(repo, path, github_token):
     return login or name, date
 
 
-def upsert_skill_entity(port_token, identifier, last_editor, last_edited_at):
+def upsert_entity(port_token, blueprint, identifier, last_editor, last_edited_at):
     encoded_identifier = urllib.parse.quote(identifier, safe="")
-    url = f"{PORT_API_URL}/v1/blueprints/skill/entities/{encoded_identifier}"
+    url = f"{PORT_API_URL}/v1/blueprints/{blueprint}/entities/{encoded_identifier}"
     headers = {"Authorization": f"Bearer {port_token}"}
     body = {"properties": {"lastEditor": last_editor, "lastEditedAt": last_edited_at}}
     http_json("PATCH", url, headers=headers, body=body)
+
+
+def sync_skills(port_token, repo, github_token):
+    skill_paths = sorted(glob.glob("skills/**/SKILL.md", recursive=True))
+    print(f"Found {len(skill_paths)} skill files")
+
+    for path in skill_paths:
+        last_editor, last_edited_at = get_last_commit_for_path(repo, path, github_token)
+        identifier = f"{repo}/{path}"
+        upsert_entity(port_token, "skill", identifier, last_editor, last_edited_at)
+        print(f"  {identifier}: lastEditor={last_editor} lastEditedAt={last_edited_at}")
+
+
+def sync_plugins(port_token, repo, github_token):
+    plugin_dirs = sorted(
+        {p.split("/")[1] for p in glob.glob("plugins/*/") if len(p.split("/")) > 1}
+    )
+    print(f"Found {len(plugin_dirs)} plugin folders")
+
+    for plugin_name in plugin_dirs:
+        manifest_paths = [
+            p
+            for p in (
+                f"plugins/{plugin_name}/.claude-plugin/plugin.json",
+                f"plugins/{plugin_name}/.cursor-plugin/plugin.json",
+            )
+            if os.path.exists(p)
+        ]
+        best_editor, best_date = None, None
+        for path in manifest_paths:
+            editor, date = get_last_commit_for_path(repo, path, github_token)
+            if date and (best_date is None or date > best_date):
+                best_editor, best_date = editor, date
+        identifier = f"{repo}/{plugin_name}"
+        upsert_entity(port_token, "agentPlugin", identifier, best_editor, best_date)
+        print(f"  {identifier}: lastEditor={best_editor} lastEditedAt={best_date}")
 
 
 def main():
@@ -85,14 +121,8 @@ def main():
 
     port_token = get_port_token(client_id, client_secret)
 
-    skill_paths = sorted(glob.glob("skills/**/SKILL.md", recursive=True))
-    print(f"Found {len(skill_paths)} skill files")
-
-    for path in skill_paths:
-        last_editor, last_edited_at = get_last_commit_for_path(repo, path, github_token)
-        identifier = f"{repo}/{path}"
-        upsert_skill_entity(port_token, identifier, last_editor, last_edited_at)
-        print(f"  {identifier}: lastEditor={last_editor} lastEditedAt={last_edited_at}")
+    sync_skills(port_token, repo, github_token)
+    sync_plugins(port_token, repo, github_token)
 
 
 if __name__ == "__main__":

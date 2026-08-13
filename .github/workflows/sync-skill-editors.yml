@@ -1,10 +1,11 @@
-name: Sync skill editors to Port
+name: Sync skill and plugin editors to Port
 
 on:
   push:
     branches: [main]
     paths:
       - "skills/**/SKILL.md"
+      - "plugins/**/plugin.json"
   workflow_dispatch: {}
 
 jobs:
