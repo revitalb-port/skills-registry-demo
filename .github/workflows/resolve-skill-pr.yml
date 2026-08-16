@@ -1,0 +1,68 @@
+name: Resolve skill PR (from Port)
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Whether to merge or close the PR"
+        required: true
+        type: choice
+        options:
+          - merge
+          - close
+      pr_number:
+        description: "Pull request number to act on"
+        required: true
+        type: string
+      node_run_id:
+        description: "Port workflow node-run id to report the result back to"
+        required: true
+        type: string
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Merge or close the PR
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ACTION: ${{ inputs.action }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+        run: |
+          set -euo pipefail
+          if [ "$ACTION" = "merge" ]; then
+            gh pr merge "$PR_NUMBER" --merge --delete-branch
+          elif [ "$ACTION" = "close" ]; then
+            gh pr close "$PR_NUMBER" --delete-branch
+          else
+            echo "Unknown action: $ACTION" >&2
+            exit 1
+          fi
+
+      - name: Report result back to Port
+        if: always()
+        env:
+          PORT_CLIENT_ID: ${{ secrets.PORT_CLIENT_ID }}
+          PORT_CLIENT_SECRET: ${{ secrets.PORT_CLIENT_SECRET }}
+          NODE_RUN_ID: ${{ inputs.node_run_id }}
+          STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          token="$(curl -sS -X POST "https://api.port.io/v1/auth/access_token" \
+            -H "Content-Type: application/json" \
+            -d "{\"clientId\":\"${PORT_CLIENT_ID}\",\"clientSecret\":\"${PORT_CLIENT_SECRET}\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["accessToken"])')"
+
+          if [ "$STATUS" = "success" ]; then
+            body='{"status":"COMPLETED","result":"SUCCESS"}'
+          else
+            body="$(python3 -c 'import json,os; print(json.dumps({"status":"COMPLETED","result":"FAILED"}))')"
+          fi
+
+          curl -sS -X PATCH "https://api.port.io/v1/workflows/nodes/runs/${NODE_RUN_ID}" \
+            -H "Authorization: Bearer ${token}" \
+            -H "Content-Type: application/json" \
+            -d "${body}"
