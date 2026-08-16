@@ -51,7 +51,7 @@ jobs:
       - name: Open pull request
         id: open_pr
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           set -euo pipefail
           pr_url="$(gh pr create \
