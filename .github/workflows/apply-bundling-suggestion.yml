@@ -48,8 +48,13 @@ jobs:
             echo "::error::$SKILL_PATH does not exist in this repo"
             exit 1
           fi
+          skill_slug="$(basename "$(dirname "$SKILL_PATH")")"
+          if [ -e "plugins/$PLUGIN_FOLDER/skills/$skill_slug" ]; then
+            echo "::error::plugins/$PLUGIN_FOLDER/skills/$skill_slug already exists - this skill is already bundled into this plugin"
+            exit 1
+          fi
 
-      - name: Copy skill into plugin and open PR
+      - name: Symlink skill into plugin and open PR
         id: open_pr
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
@@ -60,12 +65,14 @@ jobs:
           skill_slug="$(basename "$(dirname "$SKILL_PATH")")"
           branch="bundle/${PLUGIN_FOLDER}-${skill_slug}"
           git checkout -b "$branch"
-          target_dir="plugins/${PLUGIN_FOLDER}/skills/${skill_slug}"
-          mkdir -p "$target_dir"
-          cp -r "$(dirname "$SKILL_PATH")/." "$target_dir/"
+          # Plugins bundle skills via a symlink under plugins/<plugin>/skills/<slug>
+          # pointing back at the real skills/<category>/<slug> directory (see e.g.
+          # plugins/code-quality-toolkit/skills/auditing-security), not a copy.
+          target="plugins/${PLUGIN_FOLDER}/skills/${skill_slug}"
+          ln -s "../../../$(dirname "$SKILL_PATH")" "$target"
           git config user.name "port-skills-bot"
           git config user.email "port-skills-bot@users.noreply.github.com"
-          git add "$target_dir"
+          git add "$target"
           git commit -m "Bundle ${skill_slug} into ${PLUGIN_FOLDER}"
           git push origin "$branch"
           pr_url="$(gh pr create \
