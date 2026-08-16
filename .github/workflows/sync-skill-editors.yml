@@ -6,6 +6,7 @@ on:
     paths:
       - "skills/**/SKILL.md"
       - "plugins/**/plugin.json"
+      - "plugins/**/skills/**"
   workflow_dispatch: {}
 
 jobs:
