@@ -1,0 +1,66 @@
+name: Validate plugin symlinks
+
+on:
+  pull_request:
+    paths:
+      - "plugins/**"
+      - "skills/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check plugin skills are symlinks to real skills
+        run: |
+          set -uo pipefail
+          errors=0
+
+          if [ ! -d plugins ]; then
+            echo "No plugins/ directory, nothing to validate."
+            exit 0
+          fi
+
+          for plugin_dir in plugins/*/; do
+            skills_dir="${plugin_dir}skills"
+            [ -d "$skills_dir" ] || continue
+
+            for entry in "$skills_dir"/*; do
+              [ -e "$entry" ] || continue
+
+              if [ ! -L "$entry" ]; then
+                echo "::error file=${entry}::not a symlink - plugins bundle skills via a symlink to the real skills/<category>/<slug> directory, not a copy"
+                errors=$((errors + 1))
+                continue
+              fi
+
+              if [ ! -d "$entry" ]; then
+                echo "::error file=${entry}::broken symlink - target does not exist"
+                errors=$((errors + 1))
+                continue
+              fi
+
+              target="$(readlink "$entry")"
+              case "$target" in
+                ../../../skills/*) ;;
+                *)
+                  echo "::error file=${entry}::symlink target '${target}' does not point into the top-level skills/ directory (expected a ../../../skills/... relative path)"
+                  errors=$((errors + 1))
+                  continue
+                  ;;
+              esac
+
+              if [ ! -f "$entry/SKILL.md" ]; then
+                echo "::error file=${entry}::resolved target has no SKILL.md"
+                errors=$((errors + 1))
+              fi
+            done
+          done
+
+          if [ "$errors" -gt 0 ]; then
+            echo "::error::${errors} plugin skill entry/entries failed symlink validation"
+            exit 1
+          fi
+
+          echo "All plugin skill entries are valid symlinks."
