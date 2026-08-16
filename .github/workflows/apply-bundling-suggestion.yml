@@ -122,8 +122,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           PR_NUMBER: ${{ steps.open_pr.outputs.pr_number }}
         run: |
-          set -euo pipefail
-          gh pr checks "$PR_NUMBER" --watch --fail-fast
+          set -uo pipefail
+          output="$(gh pr checks "$PR_NUMBER" --watch --fail-fast 2>&1)"
+          status=$?
+          echo "$output"
+          if [ $status -eq 0 ]; then
+            exit 0
+          fi
+          if echo "$output" | grep -qi "no checks reported"; then
+            echo "No CI checks are configured on this PR - nothing to wait for, proceeding to merge."
+            exit 0
+          fi
+          exit "$status"
 
       - name: Merge and report applied
         if: always() && steps.open_pr.outcome == 'success' && steps.wait_checks.outcome == 'success'
