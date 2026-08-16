@@ -122,9 +122,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           PR_NUMBER: ${{ steps.open_pr.outputs.pr_number }}
         run: |
-          set -uo pipefail
+          set +e
           output="$(gh pr checks "$PR_NUMBER" --watch --fail-fast 2>&1)"
           status=$?
+          set -e
           echo "$output"
           if [ $status -eq 0 ]; then
             exit 0
