@@ -1,4 +1,4 @@
-name: Sync skill and plugin editors to Port
+name: Sync plugin metadata to Port
 
 on:
   push:
@@ -19,9 +19,9 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Sync last editor metadata to Port
+      - name: Sync plugin metadata to Port
         env:
           PORT_CLIENT_ID: ${{ secrets.PORT_CLIENT_ID }}
           PORT_CLIENT_SECRET: ${{ secrets.PORT_CLIENT_SECRET }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python scripts/sync_skill_editors.py
+        run: python scripts/sync_plugin_metadata.py
