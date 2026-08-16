@@ -80,7 +80,7 @@ jobs:
           if [ "$STATUS" = "success" ]; then
             body="$(python3 -c 'import json,os; print(json.dumps({"status":"SUCCESS","result":"Skill PR opened","output":{"pr_url":os.environ["PR_URL"],"branch":os.environ["BRANCH"]}}))')"
           else
-            body="$(python3 -c 'import json,os; print(json.dumps({"status":"FAILURE","result":f"publish-skill.yml job status: {os.environ[\"STATUS\"]}"}))')"
+            body="$(python3 -c 'import json,os; print(json.dumps({"status":"FAILURE","result":"publish-skill.yml job status: " + os.environ["STATUS"]}))')"
           fi
 
           curl -sS -X PATCH "https://api.port.io/v1/workflows/nodes/runs/${NODE_RUN_ID}" \
