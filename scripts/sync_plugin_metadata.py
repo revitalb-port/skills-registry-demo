@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Sync last-editor and last-edited-at metadata for every skill (SKILL.md) and
-plugin (plugin.json manifest) into the corresponding Port entity, and sync
-each plugin's skills relation from the real symlinks under
-plugins/<name>/skills/.
+Sync each plugin's skills relation into the corresponding Port agentPlugin
+entity, aggregated from the real symlinks under plugins/<name>/skills/.
 
-Port's native GitHub Ocean integration has no per-file commit history, and it
-can't aggregate a folder of symlinks into a single relation, so this script
-fills those two specific gaps. It does not touch any property the
-integration mapping already owns.
+Port's native GitHub Ocean integration can't aggregate a folder of symlinks
+into a single relation, so this script fills that gap. It does not touch
+any property the integration mapping already owns.
+
+sync_skills() is currently disabled (see main()) now that skill entities no
+longer carry lastEditor/lastEditedAt properties.
 
 Required environment variables:
   PORT_CLIENT_ID
@@ -72,11 +72,11 @@ def get_last_commit_for_path(repo, path, github_token):
     return login or name, date
 
 
-def upsert_entity(port_token, blueprint, identifier, last_editor, last_edited_at, relations=None):
+def upsert_entity(port_token, blueprint, identifier, properties=None, relations=None):
     encoded_identifier = urllib.parse.quote(identifier, safe="")
     url = f"{PORT_API_URL}/v1/blueprints/{blueprint}/entities/{encoded_identifier}"
     headers = {"Authorization": f"Bearer {port_token}"}
-    body = {"properties": {"lastEditor": last_editor, "lastEditedAt": last_edited_at}}
+    body = {"properties": properties or {}}
     if relations is not None:
         body["relations"] = relations
     http_json("PATCH", url, headers=headers, body=body)
@@ -104,7 +104,12 @@ def sync_skills(port_token, repo, github_token):
     for path in skill_paths:
         last_editor, last_edited_at = get_last_commit_for_path(repo, path, github_token)
         identifier = f"{repo}/{path}"
-        upsert_entity(port_token, "skill", identifier, last_editor, last_edited_at)
+        upsert_entity(
+            port_token,
+            "skill",
+            identifier,
+            properties={"lastEditor": last_editor, "lastEditedAt": last_edited_at},
+        )
         print(f"  {identifier}: lastEditor={last_editor} lastEditedAt={last_edited_at}")
 
 
@@ -115,33 +120,15 @@ def sync_plugins(port_token, repo, github_token):
     print(f"Found {len(plugin_dirs)} plugin folders")
 
     for plugin_name in plugin_dirs:
-        manifest_paths = [
-            p
-            for p in (
-                f"plugins/{plugin_name}/.claude-plugin/plugin.json",
-                f"plugins/{plugin_name}/.cursor-plugin/plugin.json",
-            )
-            if os.path.exists(p)
-        ]
-        best_editor, best_date = None, None
-        for path in manifest_paths:
-            editor, date = get_last_commit_for_path(repo, path, github_token)
-            if date and (best_date is None or date > best_date):
-                best_editor, best_date = editor, date
         skill_identifiers = get_plugin_skill_identifiers(repo, plugin_name)
         identifier = f"{repo}/{plugin_name}"
         upsert_entity(
             port_token,
             "agentPlugin",
             identifier,
-            best_editor,
-            best_date,
             relations={"skills": skill_identifiers},
         )
-        print(
-            f"  {identifier}: lastEditor={best_editor} lastEditedAt={best_date} "
-            f"skills={skill_identifiers}"
-        )
+        print(f"  {identifier}: skills={skill_identifiers}")
 
 
 def main():
@@ -152,7 +139,7 @@ def main():
 
     port_token = get_port_token(client_id, client_secret)
 
-    sync_skills(port_token, repo, github_token)
+    # sync_skills(port_token, repo, github_token)  # disabled: skill entities no longer carry lastEditor/lastEditedAt
     sync_plugins(port_token, repo, github_token)
 
 
