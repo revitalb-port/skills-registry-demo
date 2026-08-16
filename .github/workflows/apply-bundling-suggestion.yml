@@ -15,14 +15,6 @@ on:
         description: "Repo-relative folder name of the existing plugin under plugins/"
         required: true
         type: string
-      plugin_identifier:
-        description: "Port agentPlugin entity identifier to add the skill to"
-        required: true
-        type: string
-      skill_identifier:
-        description: "Port skill entity identifier being bundled"
-        required: true
-        type: string
       node_run_id:
         description: "Port workflow node-run id to report the result back to"
         required: true
@@ -163,31 +155,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"properties":{"status":"applied"}}'
 
-      - name: Add skill to plugin's skills relation
-        id: link_skill
-        if: always() && steps.merge.outcome == 'success'
-        env:
-          PORT_TOKEN: ${{ steps.port_auth.outputs.token }}
-          PLUGIN_ID: ${{ inputs.plugin_identifier }}
-          SKILL_ID: ${{ inputs.skill_identifier }}
-        run: |
-          set -euo pipefail
-          # The GitHub integration mapping only sets agentPlugin.relations.repository,
-          # never .skills - nothing keeps that relation in sync with the plugins/*/skills/*
-          # symlinks on its own, so we update it ourselves after a successful merge.
-          encoded_plugin_id="$(python3 -c 'import urllib.parse,os; print(urllib.parse.quote(os.environ["PLUGIN_ID"], safe=""))')"
-          current_skills="$(curl -sS -f "https://api.port.io/v1/blueprints/agentPlugin/entities/${encoded_plugin_id}" \
-            -H "Authorization: Bearer ${PORT_TOKEN}" \
-            | python3 -c 'import json,sys; print(json.dumps((json.load(sys.stdin)["entity"]["relations"].get("skills") or [])))')"
-          export CURRENT_SKILLS="$current_skills"
-          updated_skills="$(python3 -c 'import json,os; skills=json.loads(os.environ["CURRENT_SKILLS"]); s=os.environ["SKILL_ID"]; skills.append(s) if s not in skills else None; print(json.dumps(skills))')"
-          export UPDATED_SKILLS="$updated_skills"
-          body="$(python3 -c 'import json,os; print(json.dumps({"relations":{"skills":json.loads(os.environ["UPDATED_SKILLS"])}}))')"
-          curl -sS -f -X PATCH "https://api.port.io/v1/blueprints/agentPlugin/entities/${encoded_plugin_id}" \
-            -H "Authorization: Bearer ${PORT_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "${body}"
-
       - name: Report result back to Port
         if: always()
         env:
@@ -199,7 +166,6 @@ jobs:
           REPORT_ACCEPTED_STATUS: ${{ steps.report_accepted.outcome }}
           WAIT_CHECKS_STATUS: ${{ steps.wait_checks.outcome }}
           MERGE_STATUS: ${{ steps.merge.outcome }}
-          LINK_SKILL_STATUS: ${{ steps.link_skill.outcome }}
         run: |
           set -euo pipefail
           token="$(curl -sS -X POST "https://api.port.io/v1/auth/access_token" \
@@ -207,7 +173,7 @@ jobs:
             -d "{\"clientId\":\"${PORT_CLIENT_ID}\",\"clientSecret\":\"${PORT_CLIENT_SECRET}\"}" \
             | python3 -c 'import json,sys; print(json.load(sys.stdin)["accessToken"])')"
 
-          if [ "$VALIDATE_STATUS" = "success" ] && [ "$OPEN_PR_STATUS" = "success" ] && [ "$REPORT_ACCEPTED_STATUS" = "success" ] && [ "$WAIT_CHECKS_STATUS" = "success" ] && [ "$MERGE_STATUS" = "success" ] && [ "$LINK_SKILL_STATUS" = "success" ]; then
+          if [ "$VALIDATE_STATUS" = "success" ] && [ "$OPEN_PR_STATUS" = "success" ] && [ "$REPORT_ACCEPTED_STATUS" = "success" ] && [ "$WAIT_CHECKS_STATUS" = "success" ] && [ "$MERGE_STATUS" = "success" ]; then
             body='{"status":"COMPLETED","result":"SUCCESS"}'
           else
             body='{"status":"COMPLETED","result":"FAILED"}'
