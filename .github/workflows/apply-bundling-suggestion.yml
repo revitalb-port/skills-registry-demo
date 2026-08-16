@@ -1,0 +1,161 @@
+name: Apply bundling suggestion (from Port)
+
+on:
+  workflow_dispatch:
+    inputs:
+      suggestion_identifier:
+        description: "skill_bundling_suggestion entity identifier to update"
+        required: true
+        type: string
+      skill_path:
+        description: "Repo-relative path to the existing skill's SKILL.md"
+        required: true
+        type: string
+      plugin_folder:
+        description: "Repo-relative folder name of the existing plugin under plugins/"
+        required: true
+        type: string
+      node_run_id:
+        description: "Port workflow node-run id to report the result back to"
+        required: true
+        type: string
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate inputs
+        id: validate
+        env:
+          SKILL_PATH: ${{ inputs.skill_path }}
+          PLUGIN_FOLDER: ${{ inputs.plugin_folder }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SKILL_PATH" ] || [ -z "$PLUGIN_FOLDER" ]; then
+            echo "::error::skill_path and plugin_folder must both be non-empty (got skill_path='$SKILL_PATH' plugin_folder='$PLUGIN_FOLDER')"
+            exit 1
+          fi
+          if [ ! -d "plugins/$PLUGIN_FOLDER" ]; then
+            echo "::error::plugins/$PLUGIN_FOLDER does not exist in this repo"
+            exit 1
+          fi
+          if [ ! -f "$SKILL_PATH" ]; then
+            echo "::error::$SKILL_PATH does not exist in this repo"
+            exit 1
+          fi
+
+      - name: Copy skill into plugin and open PR
+        id: open_pr
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          SKILL_PATH: ${{ inputs.skill_path }}
+          PLUGIN_FOLDER: ${{ inputs.plugin_folder }}
+        run: |
+          set -euo pipefail
+          skill_slug="$(basename "$(dirname "$SKILL_PATH")")"
+          branch="bundle/${PLUGIN_FOLDER}-${skill_slug}"
+          git checkout -b "$branch"
+          target_dir="plugins/${PLUGIN_FOLDER}/skills/${skill_slug}"
+          mkdir -p "$target_dir"
+          cp -r "$(dirname "$SKILL_PATH")/." "$target_dir/"
+          git config user.name "port-skills-bot"
+          git config user.email "port-skills-bot@users.noreply.github.com"
+          git add "$target_dir"
+          git commit -m "Bundle ${skill_slug} into ${PLUGIN_FOLDER}"
+          git push origin "$branch"
+          pr_url="$(gh pr create \
+            --title "Bundle ${skill_slug} into ${PLUGIN_FOLDER}" \
+            --body "Applied via Port's apply_bundling_suggestion workflow." \
+            --head "$branch" \
+            --base main)"
+          pr_number="$(echo "$pr_url" | grep -o '[0-9]*$')"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+          echo "pr_url=${pr_url}" >> "$GITHUB_OUTPUT"
+          echo "pr_number=${pr_number}" >> "$GITHUB_OUTPUT"
+
+      - name: Get Port access token
+        id: port_auth
+        if: always() && steps.open_pr.outcome == 'success'
+        env:
+          PORT_CLIENT_ID: ${{ secrets.PORT_CLIENT_ID }}
+          PORT_CLIENT_SECRET: ${{ secrets.PORT_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          token="$(curl -sS -X POST "https://api.port.io/v1/auth/access_token" \
+            -H "Content-Type: application/json" \
+            -d "{\"clientId\":\"${PORT_CLIENT_ID}\",\"clientSecret\":\"${PORT_CLIENT_SECRET}\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["accessToken"])')"
+          echo "::add-mask::${token}"
+          echo "token=${token}" >> "$GITHUB_OUTPUT"
+
+      - name: Report accepted
+        if: always() && steps.open_pr.outcome == 'success'
+        env:
+          PORT_TOKEN: ${{ steps.port_auth.outputs.token }}
+          SUGGESTION_ID: ${{ inputs.suggestion_identifier }}
+          PR_URL: ${{ steps.open_pr.outputs.pr_url }}
+          BRANCH: ${{ steps.open_pr.outputs.branch }}
+        run: |
+          set -euo pipefail
+          body="$(python3 -c 'import json,os; print(json.dumps({"properties":{"status":"accepted","pr_url":os.environ["PR_URL"],"branch":os.environ["BRANCH"]}}))')"
+          curl -sS -X PATCH "https://api.port.io/v1/blueprints/skill_bundling_suggestion/entities/${SUGGESTION_ID// /%20}" \
+            -H "Authorization: Bearer ${PORT_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "${body}"
+
+      - name: Wait for checks
+        id: wait_checks
+        if: always() && steps.open_pr.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          PR_NUMBER: ${{ steps.open_pr.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          gh pr checks "$PR_NUMBER" --watch --fail-fast
+
+      - name: Merge and report applied
+        if: always() && steps.open_pr.outcome == 'success' && steps.wait_checks.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          PORT_TOKEN: ${{ steps.port_auth.outputs.token }}
+          SUGGESTION_ID: ${{ inputs.suggestion_identifier }}
+          PR_NUMBER: ${{ steps.open_pr.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          gh pr merge "$PR_NUMBER" --merge --delete-branch
+          curl -sS -X PATCH "https://api.port.io/v1/blueprints/skill_bundling_suggestion/entities/${SUGGESTION_ID// /%20}" \
+            -H "Authorization: Bearer ${PORT_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"properties":{"status":"applied"}}'
+
+      - name: Report result back to Port
+        if: always()
+        env:
+          PORT_CLIENT_ID: ${{ secrets.PORT_CLIENT_ID }}
+          PORT_CLIENT_SECRET: ${{ secrets.PORT_CLIENT_SECRET }}
+          NODE_RUN_ID: ${{ inputs.node_run_id }}
+          VALIDATE_STATUS: ${{ steps.validate.outcome }}
+          OPEN_PR_STATUS: ${{ steps.open_pr.outcome }}
+          WAIT_CHECKS_STATUS: ${{ steps.wait_checks.outcome }}
+        run: |
+          set -euo pipefail
+          token="$(curl -sS -X POST "https://api.port.io/v1/auth/access_token" \
+            -H "Content-Type: application/json" \
+            -d "{\"clientId\":\"${PORT_CLIENT_ID}\",\"clientSecret\":\"${PORT_CLIENT_SECRET}\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["accessToken"])')"
+
+          if [ "$VALIDATE_STATUS" = "success" ] && [ "$OPEN_PR_STATUS" = "success" ] && [ "$WAIT_CHECKS_STATUS" = "success" ]; then
+            body='{"status":"COMPLETED","result":"SUCCESS"}'
+          else
+            body='{"status":"COMPLETED","result":"FAILED"}'
+          fi
+
+          curl -sS -X PATCH "https://api.port.io/v1/workflows/nodes/runs/${NODE_RUN_ID}" \
+            -H "Authorization: Bearer ${token}" \
+            -H "Content-Type: application/json" \
+            -d "${body}"
