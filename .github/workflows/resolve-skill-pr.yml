@@ -26,6 +26,8 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - uses: actions/checkout@v4
+
       - name: Merge or close the PR
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
