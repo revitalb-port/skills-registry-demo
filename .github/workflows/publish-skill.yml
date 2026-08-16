@@ -1,0 +1,89 @@
+name: Publish skill (from Port)
+
+on:
+  workflow_dispatch:
+    inputs:
+      skill_name:
+        description: "Human-readable skill name"
+        required: true
+        type: string
+      target_path:
+        description: "Repo-relative path to write SKILL.md to, e.g. skills/frontend-ui/my-new-skill/SKILL.md"
+        required: true
+        type: string
+      skill_content:
+        description: "Full raw content of SKILL.md"
+        required: true
+        type: string
+      node_run_id:
+        description: "Port workflow node-run id to report the result back to"
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create branch and write SKILL.md
+        id: write_skill
+        env:
+          TARGET_PATH: ${{ inputs.target_path }}
+          SKILL_CONTENT: ${{ inputs.skill_content }}
+        run: |
+          set -euo pipefail
+          slug="$(basename "$(dirname "$TARGET_PATH")")"
+          branch="skill/${slug}"
+          git checkout -b "$branch"
+          mkdir -p "$(dirname "$TARGET_PATH")"
+          printf '%s' "$SKILL_CONTENT" > "$TARGET_PATH"
+          git config user.name "port-skills-bot"
+          git config user.email "port-skills-bot@users.noreply.github.com"
+          git add "$TARGET_PATH"
+          git commit -m "Add skill: ${{ inputs.skill_name }}"
+          git push origin "$branch"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        id: open_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          pr_url="$(gh pr create \
+            --title "Add skill: ${{ inputs.skill_name }}" \
+            --body "Published via Port's publish_skill workflow." \
+            --head "${{ steps.write_skill.outputs.branch }}" \
+            --base main)"
+          echo "pr_url=${pr_url}" >> "$GITHUB_OUTPUT"
+
+      - name: Report result back to Port
+        if: always()
+        env:
+          PORT_CLIENT_ID: ${{ secrets.PORT_CLIENT_ID }}
+          PORT_CLIENT_SECRET: ${{ secrets.PORT_CLIENT_SECRET }}
+          NODE_RUN_ID: ${{ inputs.node_run_id }}
+          STATUS: ${{ job.status }}
+          PR_URL: ${{ steps.open_pr.outputs.pr_url }}
+          BRANCH: ${{ steps.write_skill.outputs.branch }}
+        run: |
+          set -euo pipefail
+          token="$(curl -sS -X POST "https://api.port.io/v1/auth/access_token" \
+            -H "Content-Type: application/json" \
+            -d "{\"clientId\":\"${PORT_CLIENT_ID}\",\"clientSecret\":\"${PORT_CLIENT_SECRET}\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["accessToken"])')"
+
+          if [ "$STATUS" = "success" ]; then
+            body="$(python3 -c 'import json,os; print(json.dumps({"status":"SUCCESS","result":"Skill PR opened","output":{"pr_url":os.environ["PR_URL"],"branch":os.environ["BRANCH"]}}))')"
+          else
+            body="$(python3 -c 'import json,os; print(json.dumps({"status":"FAILURE","result":f"publish-skill.yml job status: {os.environ[\"STATUS\"]}"}))')"
+          fi
+
+          curl -sS -X PATCH "https://api.port.io/v1/workflows/nodes/runs/${NODE_RUN_ID}" \
+            -H "Authorization: Bearer ${token}" \
+            -H "Content-Type: application/json" \
+            -d "${body}"
