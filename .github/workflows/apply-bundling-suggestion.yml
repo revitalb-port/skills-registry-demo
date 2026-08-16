@@ -101,6 +101,7 @@ jobs:
           echo "token=${token}" >> "$GITHUB_OUTPUT"
 
       - name: Report accepted
+        id: report_accepted
         if: always() && steps.open_pr.outcome == 'success'
         env:
           PORT_TOKEN: ${{ steps.port_auth.outputs.token }}
@@ -109,8 +110,9 @@ jobs:
           BRANCH: ${{ steps.open_pr.outputs.branch }}
         run: |
           set -euo pipefail
+          encoded_id="$(python3 -c 'import urllib.parse,os; print(urllib.parse.quote(os.environ["SUGGESTION_ID"], safe=""))')"
           body="$(python3 -c 'import json,os; print(json.dumps({"properties":{"status":"accepted","pr_url":os.environ["PR_URL"],"branch":os.environ["BRANCH"]}}))')"
-          curl -sS -X PATCH "https://api.port.io/v1/blueprints/skill_bundling_suggestion/entities/${SUGGESTION_ID// /%20}" \
+          curl -sS -f -X PATCH "https://api.port.io/v1/blueprints/skill_bundling_suggestion/entities/${encoded_id}" \
             -H "Authorization: Bearer ${PORT_TOKEN}" \
             -H "Content-Type: application/json" \
             -d "${body}"
@@ -137,6 +139,7 @@ jobs:
           exit "$status"
 
       - name: Merge and report applied
+        id: merge
         if: always() && steps.open_pr.outcome == 'success' && steps.wait_checks.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
@@ -146,7 +149,8 @@ jobs:
         run: |
           set -euo pipefail
           gh pr merge "$PR_NUMBER" --merge --delete-branch
-          curl -sS -X PATCH "https://api.port.io/v1/blueprints/skill_bundling_suggestion/entities/${SUGGESTION_ID// /%20}" \
+          encoded_id="$(python3 -c 'import urllib.parse,os; print(urllib.parse.quote(os.environ["SUGGESTION_ID"], safe=""))')"
+          curl -sS -f -X PATCH "https://api.port.io/v1/blueprints/skill_bundling_suggestion/entities/${encoded_id}" \
             -H "Authorization: Bearer ${PORT_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{"properties":{"status":"applied"}}'
@@ -159,7 +163,9 @@ jobs:
           NODE_RUN_ID: ${{ inputs.node_run_id }}
           VALIDATE_STATUS: ${{ steps.validate.outcome }}
           OPEN_PR_STATUS: ${{ steps.open_pr.outcome }}
+          REPORT_ACCEPTED_STATUS: ${{ steps.report_accepted.outcome }}
           WAIT_CHECKS_STATUS: ${{ steps.wait_checks.outcome }}
+          MERGE_STATUS: ${{ steps.merge.outcome }}
         run: |
           set -euo pipefail
           token="$(curl -sS -X POST "https://api.port.io/v1/auth/access_token" \
@@ -167,7 +173,7 @@ jobs:
             -d "{\"clientId\":\"${PORT_CLIENT_ID}\",\"clientSecret\":\"${PORT_CLIENT_SECRET}\"}" \
             | python3 -c 'import json,sys; print(json.load(sys.stdin)["accessToken"])')"
 
-          if [ "$VALIDATE_STATUS" = "success" ] && [ "$OPEN_PR_STATUS" = "success" ] && [ "$WAIT_CHECKS_STATUS" = "success" ]; then
+          if [ "$VALIDATE_STATUS" = "success" ] && [ "$OPEN_PR_STATUS" = "success" ] && [ "$REPORT_ACCEPTED_STATUS" = "success" ] && [ "$WAIT_CHECKS_STATUS" = "success" ] && [ "$MERGE_STATUS" = "success" ]; then
             body='{"status":"COMPLETED","result":"SUCCESS"}'
           else
             body='{"status":"COMPLETED","result":"FAILED"}'
