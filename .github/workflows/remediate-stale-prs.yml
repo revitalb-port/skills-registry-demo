@@ -1,0 +1,27 @@
+name: Remediate stale PRs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/remediate-stale-prs.yml
+
+permissions:
+  pull-requests: write
+
+jobs:
+  close-obsolete-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close obsolete PR #1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          state="$(gh pr view 1 --repo "${{ github.repository }}" --json state --jq .state)"
+          if [ "$state" = "OPEN" ]; then
+            gh pr close 1 --repo "${{ github.repository }}" \
+              --comment "Closing stale PR — the skill-editor sync workflow this PR hardens was retired in #14. The changes are no longer applicable to the current codebase."
+          else
+            echo "PR #1 is already ${state}, nothing to do."
+          fi
